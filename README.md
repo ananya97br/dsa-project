@@ -13,9 +13,15 @@ This project involves building a terminal-based program that compresses files to
 
 * Then, run the command `./huffman` to run the files.
 
+* Enter the name of the file you want to compress.
+
+* Enter the name you want the compressed and decompressed file to have.
+
+* Enter `Y` or `y` to compress multiple files or enter `N` or `n` to stop execution.
+
 ## Sample output
 
-This example is using the file "sample.txt."
+This example is using the file "sample1.txt."
 
 ![output](output.png)
 

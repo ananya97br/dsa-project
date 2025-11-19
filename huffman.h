@@ -2,6 +2,10 @@
 #define HUFFMAN_H
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+#include <sys/stat.h>
 
 #define MAX 16
 

@@ -1,11 +1,7 @@
 #include "huffman.h"
-#include <stdlib.h>
 
-// Define external variable
 Tree* tree = NULL;
 
-//creating a node for the huffman tree
-//character and frequency
 Node* newNode(char character, int freq) {
     Node* temp = malloc(sizeof(Node));
     temp->character = character;
@@ -17,20 +13,20 @@ Node* newNode(char character, int freq) {
 //creating a decompression tree node
 Tree* newTreeNode() {
     Tree* node = malloc(sizeof(Tree));
-    node->g = '\0';//character
-    node->len = 0;//code length
-    node->dec = 0;//decimal rep of binary code
-    node->f = NULL;//left pointer
-    node->r = NULL;//right pointer
+    node->g = '\0';
+    node->len = 0;
+    node->dec = 0;
+    node->f = NULL;
+    node->r = NULL;
     return node;
 }
-//swapping two node used in  heap operations
+
 void swapNode(Node** a, Node** b) {
     Node* t = *a;
     *a = *b;
     *b = t;
 }
-//the new node after combining is inserted here
+
 void Heapify(Min_Heap* heap, int i) {
     int smallest = i;
     int left = 2*i + 1;
@@ -46,18 +42,18 @@ void Heapify(Min_Heap* heap, int i) {
         Heapify(heap, smallest);
     }
 }
-//all the nodes combine and finally the root will be left
+
 int isSizeOne(Min_Heap* heap) {
     return heap->size == 1;
 }
-//extract the minimum value
+
 Node* extractMinFromMin_Heap(Min_Heap* heap) {
     Node* temp = heap->array[0];
     heap->array[0] = heap->array[--heap->size];
     Heapify(heap, 0);
     return temp;
 }
-//this is to put in the newly combined nodes
+
 void insertIntoMin_Heap(Min_Heap* heap, Node* node) {
     ++heap->size;
     int i = heap->size - 1;
@@ -67,9 +63,9 @@ void insertIntoMin_Heap(Min_Heap* heap, Node* node) {
     }
     heap->array[i] = node;
 }
-//represent the actual characters while internal nodes and just adding them up
-int isLeaf(Node* node)
-{
+
+int isLeaf(Node* node)//returns true if both the nodes are NULL(leaf)
+  {
     return !(node->l) && !(node->r);
 }
 
@@ -87,11 +83,11 @@ void convertDecimalToBinary(int *bin, int dec, int len) {
         dec /= 2;
     }
 }
-//creating the min heap
+
 Min_Heap* createAndBuildMin_Heap(char arr[], int freq[], int size) {
     Min_Heap* heap = (Min_Heap*)malloc(sizeof(Min_Heap));
-    heap->size = size;//no. of characters
-    heap->capacity = size;//max number of nodes
+    heap->size = size;
+    heap->capacity = size;
     heap->array = (Node**)malloc(size * sizeof(Node*));
 
     for (int i = 0; i < size; i++) {
@@ -107,8 +103,7 @@ Min_Heap* createAndBuildMin_Heap(char arr[], int freq[], int size) {
 
 Node* buildHuffmanTree(char arr[], int freq[], int size) {
     Min_Heap* heap = createAndBuildMin_Heap(arr, freq, size);
-    while (!isSizeOne(heap))//keep looping until one node remains 
-    {
+    while (!isSizeOne(heap)) {
         Node* l = extractMinFromMin_Heap(heap);
         Node* r = extractMinFromMin_Heap(heap);
         Node* top = newNode('$', l->freq + r->freq);
@@ -136,25 +131,21 @@ void printCodesIntoFile(FILE* fp2, Node* root, int t[], int top, code** front, c
         data->p = NULL;
         data->k = root->character;
         
-        // Dynamically allocate code array
         data->code_arr = (int*)malloc(top * sizeof(int));
-        
-        // Write character
+
         fwrite(&root->character, sizeof(char), 1, fp2);
         
         for (int i = 0; i < top; i++) {
             data->code_arr[i] = t[i];
         }
         
-        // Write length
         fwrite(&top, sizeof(int), 1, fp2);
         
-        // Calculate and write decimal representation
         int dec = convertBinaryToDecimal(t, top);
         fwrite(&dec, sizeof(int), 1, fp2);
         
         data->l = top;
-//linked list for the codes so tht for compression we can just look for the codes
+
         if (*front == NULL) {
             *front = *rear = data;
         } else {
@@ -221,7 +212,6 @@ void rebuildTree(FILE* fp, int unique_size) {
         fread(&len, sizeof(int), 1, fp);
         fread(&dec, sizeof(int), 1, fp);
 
-        // Dynamically allocate binary array
         int *bin = (int*)calloc(len, sizeof(int));
         convertDecimalToBinary(bin, dec, len);
 
